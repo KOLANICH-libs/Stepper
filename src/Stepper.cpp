@@ -1,4 +1,18 @@
 /*
+ * modification to this library for enabling two wire stepper drive without using 
+ * an H-bridge board or an external NOT gate. 
+ *
+ * additions: 
+ *     new global variables for the two reverse pins and one boolean
+ *     a new constructor taking 5 params
+ *         pin1, pin2, rev_pin1, rev_pin2, internal_inverter(bool)
+ *     a new condition in the stepMotor function has been added
+ *
+ * Dagim Sisay --- dagiopia@gmail.com
+*/
+
+
+/*
  * Stepper.cpp - Stepper library for Wiring/Arduino - Version 1.1.0
  *
  * Original library        (0.1)   by Tom Igoe.
@@ -101,7 +115,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
   this->motor_pin_3 = 0;
   this->motor_pin_4 = 0;
   this->motor_pin_5 = 0;
-
+  this->internal_inverter = false;
   // pin_count is used by the stepMotor() method:
   this->pin_count = 2;
 }
@@ -133,7 +147,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
 
   // When there are 4 pins, set the others to 0:
   this->motor_pin_5 = 0;
-
+  this->internal_inverter = false;
   // pin_count is used by the stepMotor() method:
   this->pin_count = 4;
 }
@@ -164,10 +178,44 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
   pinMode(this->motor_pin_3, OUTPUT);
   pinMode(this->motor_pin_4, OUTPUT);
   pinMode(this->motor_pin_5, OUTPUT);
-
+  this->internal_inverter = false;
   // pin_count is used by the stepMotor() method:
   this->pin_count = 5;
 }
+
+
+/*
+ * constructor for when using two wires only without
+ * using an external bridge for inverting the signal from the two
+ */
+Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, 
+                 int reverse_pin_1, int reverse_pin_2, bool internal_inverter=true)
+{
+  this->step_number = 0;    // which step the motor is on
+  this->direction = 0;      // motor direction
+  this->last_step_time = 0; // time stamp in us of the last step taken
+  this->number_of_steps = number_of_steps; // total number of steps for this motor
+
+  // Arduino pins for the motor control connection:
+  this->motor_pin_1 = motor_pin_1;
+  this->motor_pin_2 = motor_pin_2;
+  this->reverse_pin_1 = reverse_pin_1;
+  this->reverse_pin_2 = reverse_pin_2;
+  // setup the pins on the microcontroller:
+  pinMode(this->motor_pin_1, OUTPUT);
+  pinMode(this->motor_pin_2, OUTPUT);
+  pinMode(this->reverse_pin_1, OUTPUT);
+  pinMode(this->reverse_pin_2, OUTPUT);
+
+  // When there are only 2 pins, set the others to 0:
+  this->motor_pin_3 = 0;
+  this->motor_pin_4 = 0;
+  this->motor_pin_5 = 0;
+  this->internal_inverter = true;
+  // pin_count is used by the stepMotor() method:
+  this->pin_count = 2;
+}
+
 
 /*
  * Sets the speed in revs per minute
@@ -231,7 +279,45 @@ void Stepper::step(int steps_to_move)
  */
 void Stepper::stepMotor(int thisStep)
 {
-  if (this->pin_count == 2) {
+/* the internal_inverter
+ * this is useful when u don't want to use an external NOT gate or an H-bridge when
+ * trying to drive a stepper with two pins only. 
+ * when using two pins, it is required that u supply the opposite pins
+ * inverted signals by yourself which may require an H-bridge or a simple NOT gate
+ * ---
+ * the key is that the reverse pins can be shared between many motors.
+ ***Dagim Sisay***
+ */
+  if (internal_inverter) {
+    switch (thisStep) {
+      case 0:  // 01
+        digitalWrite(motor_pin_1, LOW);
+        digitalWrite(motor_pin_2, HIGH);
+        digitalWrite(reverse_pin_1, HIGH)
+        digitalWrite(reverse_pin_2, LOW)
+      break;
+      case 1:  // 11
+        digitalWrite(motor_pin_1, HIGH);
+        digitalWrite(motor_pin_2, HIGH);
+        digitalWrite(reverse_pin_1, LOW)
+        digitalWrite(reverse_pin_2, LOW)
+      break;
+      case 2:  // 10
+        digitalWrite(motor_pin_1, HIGH);
+        digitalWrite(motor_pin_2, LOW);
+        digitalWrite(reverse_pin_1, LOW)
+        digitalWrite(reverse_pin_2, HIGH)
+      break;
+      case 3:  // 00
+        digitalWrite(motor_pin_1, LOW);
+        digitalWrite(motor_pin_2, LOW);
+        digitalWrite(reverse_pin_1, HIGH)
+        digitalWrite(reverse_pin_2, HIGH)
+      break;
+    }
+  }
+
+  if (this->pin_count == 2 && !internal_inverter) {
     switch (thisStep) {
       case 0:  // 01
         digitalWrite(motor_pin_1, LOW);
