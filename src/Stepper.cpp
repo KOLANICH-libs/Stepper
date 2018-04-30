@@ -84,6 +84,7 @@
  */
 Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
 {
+  this->mode = StepMode::Normal;
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -114,6 +115,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
 Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
                                       int motor_pin_3, int motor_pin_4)
 {
+  this->mode = StepMode::Normal;
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -146,6 +148,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
                                       int motor_pin_3, int motor_pin_4,
                                       int motor_pin_5)
 {
+  this->mode = StepMode::Normal;
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -175,6 +178,21 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
 void Stepper::setSpeed(long whatSpeed)
 {
   this->step_delay = 60L * 1000L * 1000L / this->number_of_steps / whatSpeed;
+}
+
+void Stepper::setMode(StepMode mode){
+  if(this-> mode == mode)
+    return;
+  if(this->mode == StepMode::Normal && mode == StepMode::Half){
+    this->number_of_steps /=2;
+    this->step_delay /=2;
+    this->mode = mode
+  }
+  if(this->mode == StepMode::Half && mode == StepMode::Normal){
+    this->number_of_steps *=2;
+    this->step_delay *=2;
+    this->mode = mode
+  }
 }
 
 /*
@@ -221,11 +239,20 @@ void Stepper::step(int steps_to_move)
       if (this->pin_count == 5)
         stepMotor(this->step_number % 10);
       else
-        stepMotor(this->step_number % 4);
+	if(this->mode == StepMode::Half)
+	  stepMotor(this->step_number % 8);
+	else
+	  stepMotor(this->step_number % 4);
     }
   }
 }
 
+void Stepper::writePins4(int p1, int p2, int p3, int p4){
+  digitalWrite(motor_pin_1, p1);
+  digitalWrite(motor_pin_2, p2);
+  digitalWrite(motor_pin_3, p3);
+  digitalWrite(motor_pin_4, p4);
+}
 /*
  * Moves the motor forward or backwards.
  */
@@ -252,31 +279,50 @@ void Stepper::stepMotor(int thisStep)
     }
   }
   if (this->pin_count == 4) {
-    switch (thisStep) {
+    switch(this->mode){
+    case StepMode::Normal:
+      switch (thisStep) {
       case 0:  // 1010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-      break;
+	writePins4(1,0,1,0);
+	break;
       case 1:  // 0110
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-      break;
+	writePins4(0,1,1,0);
+	break;
       case 2:  //0101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-      break;
+	writePins4(0,1,0,1);
+	break;
       case 3:  //1001
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
+	writePins4(1,0,0,1);
+	break;
+      }
       break;
+    case StepMode::Half:
+      switch (thisStep){
+      case 0:
+	writePins4(1,0,1,0);
+	break;
+      case 1:
+	writePins4(0,0,1,0);
+	break;
+      case 2:
+	writePins4(0,1,1,0);
+	break;
+      case 3:
+	writePins4(0,1,0,0);
+	break;
+      case 4:
+	writePins4(0,1,0,1);
+	break;
+      case 5:
+	writePins4(0,0,0,1);
+	break;
+      case 6:
+	writePins4(1,0,0,1);
+	break;
+      case 7:
+	writePins4(1,0,0,0);
+	break;
+      }
     }
   }
 

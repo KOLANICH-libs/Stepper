@@ -80,6 +80,12 @@
 #define Stepper_h
 
 // library interface description
+enum class StepMode {
+  Normal,
+  Half,
+};
+
+  
 class Stepper {
   public:
     // constructors:
@@ -92,6 +98,7 @@ class Stepper {
 
     // speed setter method:
     void setSpeed(long whatSpeed);
+    void setMode(StepMode mode);
 
     // mover method:
     void step(int number_of_steps);
@@ -115,6 +122,10 @@ class Stepper {
     int motor_pin_5;          // Only 5 phase motor
 
     unsigned long last_step_time; // time stamp in us of when the last step was taken
+    StepMode mode;
+
+    void writePins4(int, int, int, int);
+
 };
 
 #endif
