@@ -1,13 +1,7 @@
 /*
- * Stepper.h - Stepper library for Wiring/Arduino - Version 1.1.0
+ * Stepper.h - Stepper library for Raspberry Pi - Version 1.0
  *
- * Original library        (0.1)   by Tom Igoe.
- * Two-wire modifications  (0.2)   by Sebastian Gassner
- * Combination version     (0.3)   by Tom Igoe and David Mellis
- * Bug fix for four-wire   (0.4)   by Tom Igoe, bug fix from Noah Shibley
- * High-speed stepping mod         by Eugene Kozlenko
- * Timer rollover fix              by Eugene Kozlenko
- * Five phase five wire    (1.1.0) by Ryan Orendorff
+ * Modified for raspberry pi (1.0) by Abe Wieland
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +12,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
  *
  * Drives a unipolar, bipolar, or five phase stepper motor.
  *
@@ -74,22 +63,26 @@
  *
  * http://www.arduino.cc/en/Tutorial/Stepper
  */
-
-// ensure this library description is only included once
 #ifndef Stepper_h
 #define Stepper_h
 
-// library interface description
+#include <wiringPi.h>
+
 class Stepper {
   public:
-    // constructors:
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2);
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                                 int motor_pin_3, int motor_pin_4);
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                                 int motor_pin_3, int motor_pin_4,
-                                 int motor_pin_5);
-
+  
+    Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2);
+    Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4);
+    Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5);
+    
+    // The numbering schemes (documented at http://wiringpi.com/reference/setup/)
+    enum PinNumberingScheme
+    {
+       WIRING_PI,         // The wiringPi numbering scheme
+       GPIO,              // The Broadcom GPIO numbering scheme
+       PHYSICAL          // The physical pin location (only for P1)
+    }
+    
     // speed setter method:
     void setSpeed(long whatSpeed);
 
