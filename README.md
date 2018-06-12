@@ -5,6 +5,7 @@ A simple library for controlling stepper motors through the GPIO pins on a raspb
 
 For information about the original arduino library, visit
 http://www.arduino.cc/en/Reference/Stepper
+
 For information about wiringPi, visit
 http://wiringpi.com
 
