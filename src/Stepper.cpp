@@ -1,13 +1,7 @@
 /*
- * Stepper.cpp - Stepper library for Wiring/Arduino - Version 1.1.0
+ * Stepper.h - Stepper library for Raspberry Pi - Version 1.0
  *
- * Original library        (0.1)   by Tom Igoe.
- * Two-wire modifications  (0.2)   by Sebastian Gassner
- * Combination version     (0.3)   by Tom Igoe and David Mellis
- * Bug fix for four-wire   (0.4)   by Tom Igoe, bug fix from Noah Shibley
- * High-speed stepping mod         by Eugene Kozlenko
- * Timer rollover fix              by Eugene Kozlenko
- * Five phase five wire    (1.1.0) by Ryan Orendorff
+ * Modified for raspberry pi (1.0) by Abe Wieland
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,11 +12,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
  *
  * Drives a unipolar, bipolar, or five phase stepper motor.
  *
@@ -75,15 +64,28 @@
  * http://www.arduino.cc/en/Tutorial/Stepper
  */
 
-#include "Arduino.h"
 #include "Stepper.h"
 
 /*
  * two-wire constructor.
  * Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
+Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2)
 {
+  // Initialize wiringPi, based on wiring scheme
+  switch (scheme)
+  {
+    case WIRING_PI:
+       wiringPiSetup();
+       break;
+    case GPIO:
+       wiringPiSetupGpio();
+       break;
+    case PHYSICAL:
+       wiringPiSetupPhys();
+       break;
+  }
+  
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -111,9 +113,22 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
  *   constructor for four-pin version
  *   Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                                      int motor_pin_3, int motor_pin_4)
+Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4)
 {
+  // Initialize wiringPi, based on wiring scheme
+  switch (scheme)
+  {
+    case WIRING_PI:
+       wiringPiSetup();
+       break;
+    case GPIO:
+       wiringPiSetupGpio();
+       break;
+    case PHYSICAL:
+       wiringPiSetupPhys();
+       break;
+  }
+  
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -142,10 +157,22 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
  *   constructor for five phase motor with five wires
  *   Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                                      int motor_pin_3, int motor_pin_4,
-                                      int motor_pin_5)
+Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5)
 {
+  // Initialize wiringPi, based on wiring scheme
+  switch (scheme)
+  {
+    case WIRING_PI:
+       wiringPiSetup();
+       break;
+    case GPIO:
+       wiringPiSetupGpio();
+       break;
+    case PHYSICAL:
+       wiringPiSetupPhys();
+       break;
+  }
+  
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
