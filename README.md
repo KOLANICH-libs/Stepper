@@ -1,14 +1,15 @@
-= Stepper Library for Arduino =
+= Stepper Library for Raspberry Pi =
 
-This library allows you to control unipolar or bipolar stepper motors. To use it you will need a stepper motor, and the appropriate hardware to control it.
+A simple library for controlling stepper motors through the GPIO pins on a raspberry pi. Adapted from the arduino library using wiringPi.
 
-For more information about this library please visit us at
+For information about the original arduino library visit
 http://www.arduino.cc/en/Reference/Stepper
 
 == License ==
 
-Copyright (c) Arduino LLC. All right reserved.
-Copyright (c) Sebastian Gassner. All right reserved.
+Orginal library
+Copyright (c) Arduino LLC. All right reserved;
+Copyright (c) Sebastian Gassner. All right reserved;
 Copyright (c) Noah Shibley. All right reserved.
 
 This library is free software; you can redistribute it and/or
