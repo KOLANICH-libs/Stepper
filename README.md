@@ -13,6 +13,7 @@ Building
 --------
 
 Requires wiringPi. Download instructions at http://wiringpi.com/download-and-install/.
+
 To build, run `g++ Stepper.h -lwiringPi`
 
 License
