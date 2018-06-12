@@ -12,7 +12,9 @@ http://wiringpi.com
 Building
 --------
 
-When compiling, make sure to add -lwiringPi to your command-line options to include wiringPi.
+Requires wiringPi. Download instructions at http://wiringpi.com/download-and-install/.
+To build, run
+  g++ Stepper.h -lwiringPi
 
 License
 -------
