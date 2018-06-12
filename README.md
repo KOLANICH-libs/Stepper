@@ -9,12 +9,14 @@ http://www.arduino.cc/en/Reference/Stepper
 For information about wiringPi, visit
 http://wiringpi.com
 
+Move.cpp is a simple example program that uses command line arguments to run the stepper motor.
+
 Building
 --------
 
 Requires wiringPi. Download instructions at http://wiringpi.com/download-and-install/.
 
-To build, run `g++ Stepper.h -lwiringPi`
+To build, run `g++ Move.cpp Stepper.cpp -lwiringPi`
 
 License
 -------
