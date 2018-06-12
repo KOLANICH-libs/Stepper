@@ -9,6 +9,11 @@ http://www.arduino.cc/en/Reference/Stepper
 For information about wiringPi, visit
 http://wiringpi.com
 
+Building
+--------
+
+When compiling, make sure to add -lwiringPi to your command-line options to include wiringPi.
+
 License
 -------
 
