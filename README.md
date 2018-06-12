@@ -1,11 +1,13 @@
-= Stepper Library for Raspberry Pi =
+Stepper Library for Raspberry Pi
+================================
 
 A simple library for controlling stepper motors through the GPIO pins on a raspberry pi. Adapted from the arduino library using wiringPi.
 
 For information about the original arduino library visit
 http://www.arduino.cc/en/Reference/Stepper
 
-== License ==
+License
+-------
 
 Orginal library
 Copyright (c) Arduino LLC. All right reserved;
