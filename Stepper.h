@@ -66,22 +66,13 @@
 #ifndef Stepper_h
 #define Stepper_h
 
-#include <wiringPi.h>
-
 class Stepper {
   public:
   
-    Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2);
-    Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4);
-    Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5);
-    
-    // The numbering schemes (documented at http://wiringpi.com/reference/setup/)
-    enum PinNumberingScheme
-    {
-       WIRING_PI,         // The wiringPi numbering scheme
-       GPIO,              // The Broadcom GPIO numbering scheme
-       PHYSICAL          // The physical pin location (only for P1)
-    }
+	// Constructors. The pin numbers are standard gpio numbers
+    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2);
+    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4);
+    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5);
     
     // speed setter method:
     void setSpeed(long whatSpeed);

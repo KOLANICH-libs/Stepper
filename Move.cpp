@@ -1,15 +1,20 @@
 #include "Stepper.h"
+#include "bcm2835.h"
 #include <iostream>
 #include <cstdlib>
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+	// Print usage
+  if (argc != 4)
   {
-    std::cerr << "usage: Move speed steps" << endl;
+    std::cerr << "usage: Move speed maxSteps steps" << endl;
     return 1;
   }
-  Stepper motor(800, GPIO, 27, 22, 23, 24);
+  // Initialize stepper on pins 27, 22, 23, & 24
+  Stepper motor(argv[2], 27, 22, 23, 24);
+  // Set the speed
   motor.setSpeed(argv[1]);
-  motor.step(atoi(argv[2]));
+  // Step the motor
+  motor.step(atoi(argv[3]));
 }

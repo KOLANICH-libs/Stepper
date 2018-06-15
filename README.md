@@ -1,22 +1,33 @@
 Stepper Library for Raspberry Pi
 ================================
 
-A simple library for controlling stepper motors through the GPIO pins on a raspberry pi. Adapted from the arduino library using wiringPi.
+A simple library for controlling stepper motors through the GPIO pins on a raspberry pi.
+Adapted from the arduino library using bcm2835.
 
 For information about the original arduino library, visit
 http://www.arduino.cc/en/Reference/Stepper
 
-For information about wiringPi, visit
-http://wiringpi.com
+For information about bcm2835, visit
+http://www.airspayce.com/mikem/bcm2835
 
 Move.cpp is a simple example program that uses command line arguments to run the stepper motor.
 
 Building
 --------
 
-Requires wiringPi. Download instructions at http://wiringpi.com/download-and-install/.
+Requires bcm2835. To install first download the latest version of bcm2835.
 
-To build, run `g++ Move.cpp Stepper.cpp -lwiringPi`
+E.g. `curl -O http://www.airspayce.com/mikem/bcm2835/bcm2835-1.xx.tar.gz`
+
+Then
+	tar zxf bcm2835-1.xx.tar.gz
+	cd bcm2835-1.xx
+	./configure
+	make
+	sudo make check
+	sudo make install
+
+To build, run `g++ Move.cpp Stepper.cpp -lbcm2835`
 
 License
 -------

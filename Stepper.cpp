@@ -1,7 +1,9 @@
 /*
- * Stepper.h - Stepper library for Raspberry Pi - Version 1.0
+ * Stepper.cpp - Stepper library for Raspberry Pi - Version 1.0
  *
  * Modified for raspberry pi (1.0) by Abe Wieland
+ * 
+ * See Stepper.h for additional instructions.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,79 +15,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * Drives a unipolar, bipolar, or five phase stepper motor.
- *
- * When wiring multiple stepper motors to a microcontroller, you quickly run
- * out of output pins, with each motor requiring 4 connections.
- *
- * By making use of the fact that at any time two of the four motor coils are
- * the inverse of the other two, the number of control connections can be
- * reduced from 4 to 2 for the unipolar and bipolar motors.
- *
- * A slightly modified circuit around a Darlington transistor array or an
- * L293 H-bridge connects to only 2 microcontroler pins, inverts the signals
- * received, and delivers the 4 (2 plus 2 inverted ones) output signals
- * required for driving a stepper motor. Similarly the Arduino motor shields
- * 2 direction pins may be used.
- *
- * The sequence of control signals for 5 phase, 5 control wires is as follows:
- *
- * Step C0 C1 C2 C3 C4
- *    1  0  1  1  0  1
- *    2  0  1  0  0  1
- *    3  0  1  0  1  1
- *    4  0  1  0  1  0
- *    5  1  1  0  1  0
- *    6  1  0  0  1  0
- *    7  1  0  1  1  0
- *    8  1  0  1  0  0
- *    9  1  0  1  0  1
- *   10  0  0  1  0  1
- *
- * The sequence of control signals for 4 control wires is as follows:
- *
- * Step C0 C1 C2 C3
- *    1  1  0  1  0
- *    2  0  1  1  0
- *    3  0  1  0  1
- *    4  1  0  0  1
- *
- * The sequence of controls signals for 2 control wires is as follows
- * (columns C1 and C2 from above):
- *
- * Step C0 C1
- *    1  0  1
- *    2  1  1
- *    3  1  0
- *    4  0  0
- *
- * The circuits can be found at
- *
- * http://www.arduino.cc/en/Tutorial/Stepper
- */
+*/
 
 #include "Stepper.h"
+#include "bcm2835.h"
+#include <iostream>
 
 /*
  * two-wire constructor.
  * Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2)
+Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
 {
-  // Initialize wiringPi, based on wiring scheme
-  switch (scheme)
-  {
-    case WIRING_PI:
-       wiringPiSetup();
-       break;
-    case GPIO:
-       wiringPiSetupGpio();
-       break;
-    case PHYSICAL:
-       wiringPiSetupPhys();
-       break;
-  }
-  
+	// Initialize bcm2835. If not root, fails.
+	if (!bcm2835_init())
+	{
+		std::cerr << "Failed to initialize: Stepper.cpp must be run as root." << std::endl;
+	}
+
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -96,8 +43,8 @@ Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1
   this->motor_pin_2 = motor_pin_2;
 
   // setup the pins on the microcontroller:
-  pinMode(this->motor_pin_1, OUTPUT);
-  pinMode(this->motor_pin_2, OUTPUT);
+	bcm2835_gpio_fsel(this->motor_pin_1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_2, BCM2835_GPIO_FSEL_OUTP);
 
   // When there are only 2 pins, set the others to 0:
   this->motor_pin_3 = 0;
@@ -115,19 +62,11 @@ Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1
  */
 Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4)
 {
-  // Initialize wiringPi, based on wiring scheme
-  switch (scheme)
-  {
-    case WIRING_PI:
-       wiringPiSetup();
-       break;
-    case GPIO:
-       wiringPiSetupGpio();
-       break;
-    case PHYSICAL:
-       wiringPiSetupPhys();
-       break;
-  }
+	// Initialize bcm2835. If not root, fails.
+	if (!bcm2835_init())
+	{
+		std::cerr << "Failed to initialize: Stepper.cpp must be run as root." << std::endl;
+	}
   
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
@@ -141,10 +80,11 @@ Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1
   this->motor_pin_4 = motor_pin_4;
 
   // setup the pins on the microcontroller:
-  pinMode(this->motor_pin_1, OUTPUT);
-  pinMode(this->motor_pin_2, OUTPUT);
-  pinMode(this->motor_pin_3, OUTPUT);
-  pinMode(this->motor_pin_4, OUTPUT);
+	bcm2835_gpio_fsel(this->motor_pin_1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_2, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_3, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_4, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_5, BCM2835_GPIO_FSEL_OUTP);
 
   // When there are 4 pins, set the others to 0:
   this->motor_pin_5 = 0;
@@ -159,19 +99,11 @@ Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1
  */
 Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5)
 {
-  // Initialize wiringPi, based on wiring scheme
-  switch (scheme)
-  {
-    case WIRING_PI:
-       wiringPiSetup();
-       break;
-    case GPIO:
-       wiringPiSetupGpio();
-       break;
-    case PHYSICAL:
-       wiringPiSetupPhys();
-       break;
-  }
+	// Initialize bcm2835. If not root, fails.
+	if (!bcm2835_init())
+	{
+		std::cerr << "Failed to initialize: Stepper.cpp must be run as root." << std::endl;
+	}
   
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
@@ -186,11 +118,11 @@ Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1
   this->motor_pin_5 = motor_pin_5;
 
   // setup the pins on the microcontroller:
-  pinMode(this->motor_pin_1, OUTPUT);
-  pinMode(this->motor_pin_2, OUTPUT);
-  pinMode(this->motor_pin_3, OUTPUT);
-  pinMode(this->motor_pin_4, OUTPUT);
-  pinMode(this->motor_pin_5, OUTPUT);
+	bcm2835_gpio_fsel(this->motor_pin_1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_2, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_3, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_4, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(this->motor_pin_5, BCM2835_GPIO_FSEL_OUTP);
 
   // pin_count is used by the stepMotor() method:
   this->pin_count = 5;
@@ -261,48 +193,48 @@ void Stepper::stepMotor(int thisStep)
   if (this->pin_count == 2) {
     switch (thisStep) {
       case 0:  // 01
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
       break;
       case 1:  // 11
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
       break;
       case 2:  // 10
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
       break;
       case 3:  // 00
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, LOW);
       break;
     }
   }
   if (this->pin_count == 4) {
     switch (thisStep) {
       case 0:  // 1010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, LOW);
       break;
       case 1:  // 0110
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, LOW);
       break;
       case 2:  //0101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
       break;
       case 3:  //1001
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
       break;
     }
   }
@@ -310,74 +242,74 @@ void Stepper::stepMotor(int thisStep)
   if (this->pin_count == 5) {
     switch (thisStep) {
       case 0:  // 01101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_5, HIGH);
         break;
       case 1:  // 01001
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_5, HIGH);
         break;
       case 2:  // 01011
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, HIGH);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_5, HIGH);
         break;
       case 3:  // 01010
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_5, LOW);
         break;
       case 4:  // 11010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, HIGH);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_5, LOW);
         break;
       case 5:  // 10010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, LOW);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_5, LOW);
         break;
       case 6:  // 10110
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, HIGH);
+        bcm2835_gpio_write(motor_pin_5, LOW);
         break;
       case 7:  // 10100
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, LOW);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_5, LOW);
         break;
       case 8:  // 10101
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        bcm2835_gpio_write(motor_pin_1, HIGH);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_5, HIGH);
         break;
       case 9:  // 00101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        bcm2835_gpio_write(motor_pin_1, LOW);
+        bcm2835_gpio_write(motor_pin_2, LOW);
+        bcm2835_gpio_write(motor_pin_3, HIGH);
+        bcm2835_gpio_write(motor_pin_4, LOW);
+        bcm2835_gpio_write(motor_pin_5, HIGH);
         break;
     }
   }
@@ -388,5 +320,5 @@ void Stepper::stepMotor(int thisStep)
 */
 int Stepper::version(void)
 {
-  return 5;
+  return 1;
 }
