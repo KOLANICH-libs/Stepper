@@ -19,13 +19,15 @@ Requires bcm2835. To install first download the latest version of bcm2835.
 
 E.g. `curl -O http://www.airspayce.com/mikem/bcm2835/bcm2835-1.xx.tar.gz`
 
-Then
-    tar zxf bcm2835-1.xx.tar.gz
-    cd bcm2835-1.xx
-    ./configure
-    make
-    sudo make check
-    sudo make install
+Then  
+```
+tar zxf bcm2835-1.xx.tar.gz
+cd bcm2835-1.xx
+./configure
+make
+sudo make check
+sudo make install
+```
 
 To build, run `g++ Move.cpp Stepper.cpp -lbcm2835`
 
