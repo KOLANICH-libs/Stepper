@@ -60,7 +60,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
  *   constructor for four-pin version
  *   Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4)
+Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4)
 {
 	// Initialize bcm2835. If not root, fails.
 	if (!bcm2835_init())
@@ -97,7 +97,7 @@ Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1
  *   constructor for five phase motor with five wires
  *   Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, PinNumberingScheme scheme, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5)
+Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int motor_pin_3, int motor_pin_4, int motor_pin_5)
 {
 	// Initialize bcm2835. If not root, fails.
 	if (!bcm2835_init())
@@ -142,19 +142,24 @@ void Stepper::setSpeed(long whatSpeed)
  */
 void Stepper::step(int steps_to_move)
 {
-  int steps_left = abs(steps_to_move);  // how many steps to take
-
-  // determine direction based on whether steps_to_mode is + or -:
-  if (steps_to_move > 0) { this->direction = 1; }
-  if (steps_to_move < 0) { this->direction = 0; }
-
+  int steps_left; // how many steps to take
+  if (steps_to_move > 0) // determine direction based on whether steps_to_mode is + or -:
+  {
+    this->direction = 1;
+    steps_left = steps_to_move;
+  }
+  if (steps_to_move < 0)
+  {
+    this->direction = 0;
+    steps_left = -steps_to_move;
+  }
 
   // decrement the number of steps, moving one step each time:
   while (steps_left > 0)
   {
-    unsigned long now = micros();
+    std::::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock.now();
     // move only if the appropriate delay has passed:
-    if (now - this->last_step_time >= this->step_delay)
+    if (std::chrono::duration_cast<std::chrono::microseconds>(now - this->last_step_time).count() >= this->step_delay)
     {
       // get the timeStamp of when you stepped:
       this->last_step_time = now;
