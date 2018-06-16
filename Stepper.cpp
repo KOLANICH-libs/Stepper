@@ -154,7 +154,7 @@ void Stepper::step(int steps_to_move)
   // decrement the number of steps, moving one step each time:
   while (steps_left > 0)
   {
-    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock.now();
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
     // move only if the appropriate delay has passed:
     if (std::chrono::duration_cast<std::chrono::microseconds>(now - this->last_step_time).count() >= this->step_delay)
     {
