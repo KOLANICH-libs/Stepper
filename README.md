@@ -29,7 +29,7 @@ sudo make check
 sudo make install
 ```
 
-To build, run `g++ Move.cpp Stepper.cpp -lbcm2835`
+To build, run `g++ Move.cpp Stepper.cpp -std=c++11 -lbcm2835`
 
 License
 -------
