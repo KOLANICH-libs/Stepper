@@ -1,7 +1,7 @@
 #include "Stepper.h"
 #include "bcm2835.h"
 #include <unistd.h>
-#include <cstdlib.h>
+#include <cstdlib>
 
 #define STEPS_PER_REVOLUTION 512 //512 steps per revolution
 
