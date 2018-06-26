@@ -15,13 +15,13 @@ int main()
   while (1)
   {
     // Step the motor one revolution clockwise
-    motor.step(STEPS_PER_REVOLUTION);
     std::cout << "Clockwise" << std::endl;
+    motor.step(STEPS_PER_REVOLUTION);
     // Sleep to make moves independent
     usleep(1000000);
     // Step the motor one revolution counterclockwise
-    motor.step(-STEPS_PER_REVOLUTION);
     std::cout << "Counterclockwise" << std::endl;
+    motor.step(-STEPS_PER_REVOLUTION);
     // Sleep to make moves independent
     usleep(1000000);
   }
