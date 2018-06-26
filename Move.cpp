@@ -1,20 +1,19 @@
 #include "Stepper.h"
 #include "bcm2835.h"
-#include <iostream>
-#include <cstdlib>
 
-int main(int argc, char* argv[])
+#define STEPS_PER_REVOLUTION 512 //512 steps per revolution
+
+int main()
 {
-	// Print usage
-  if (argc != 4)
-  {
-    std::cerr << "usage: Move speed maxSteps steps" << std::endl;
-    return 1;
-  }
-  // Initialize stepper on pins 27, 22, 23, & 24
-  Stepper motor(atoi(argv[2]), 27, 22, 23, 24);
+  // Initialize stepper on pins 27, 22, 23, & 24, with the steps per revolution
+  Stepper motor(STEPS_PER_REVOLUTION, 27, 22, 23, 24);
   // Set the speed
-  motor.setSpeed(atoi(argv[1]));
-  // Step the motor
-  motor.step(atoi(argv[3]));
+  motor.setSpeed(20);
+  while (1)
+	{
+    // Step the motor one revolution clockwise
+    motor.step(STEPS_PER_REVOLUTION);
+    // Step the motor one revolution counterclockwise
+    motor.step(-STEPS_PER_REVOLUTION);
+	}
 }
