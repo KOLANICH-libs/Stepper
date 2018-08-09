@@ -10,7 +10,7 @@ int main()
   // Initialize stepper on pins 27, 22, 23, & 24, with the steps per revolution
   Stepper motor(STEPS_PER_REVOLUTION, 27, 22, 23, 24);
   // Set the speed
-  motor.setSpeed(20);
+  motor.setSpeed(50);
   std::cout << "Speed set" << std::endl;
   while (1)
   {
@@ -18,11 +18,11 @@ int main()
     std::cout << "Clockwise" << std::endl;
     motor.step(STEPS_PER_REVOLUTION);
     // Sleep to make moves independent
-    usleep(1000000);
+    usleep(500000);
     // Step the motor one revolution counterclockwise
     std::cout << "Counterclockwise" << std::endl;
     motor.step(-STEPS_PER_REVOLUTION);
     // Sleep to make moves independent
-    usleep(1000000);
+    usleep(500000);
   }
 }
