@@ -10,7 +10,7 @@ http://www.arduino.cc/en/Reference/Stepper
 For information about bcm2835, visit
 http://www.airspayce.com/mikem/bcm2835
 
-Move.cpp is a simple example program that uses command line arguments to run the stepper motor.
+Move.cpp is a simple example program that bounces the stepper motor. Edit the file to reflect the steps per revolution and speed.
 
 Building
 --------
