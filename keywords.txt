@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Stepper	KEYWORD1	Stepper
+Stepper	KEYWORD1	StepperPCF8574
 
 #######################################
 # Methods and Functions (KEYWORD2)

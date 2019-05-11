@@ -79,14 +79,16 @@
 #ifndef Stepper_h
 #define Stepper_h
 
+#include "PCF8574.h"
+
 // library interface description
 class Stepper {
   public:
     // constructors:
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2);
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
+    Stepper(PCF8574 *pcf8574, int number_of_steps, int motor_pin_1, int motor_pin_2);
+    Stepper(PCF8574 *pcf8574, int number_of_steps, int motor_pin_1, int motor_pin_2,
                                  int motor_pin_3, int motor_pin_4);
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
+    Stepper(PCF8574 *pcf8574, int number_of_steps, int motor_pin_1, int motor_pin_2,
                                  int motor_pin_3, int motor_pin_4,
                                  int motor_pin_5);
 
@@ -99,6 +101,8 @@ class Stepper {
     int version(void);
 
   private:
+    PCF8574 *pcf8574;
+
     void stepMotor(int this_step);
 
     int direction;            // Direction of rotation

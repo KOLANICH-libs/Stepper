@@ -82,8 +82,9 @@
  * two-wire constructor.
  * Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
+Stepper::Stepper(PCF8574 *pcf8574, int number_of_steps, int motor_pin_1, int motor_pin_2)
 {
+	this->pcf8574 = pcf8574;
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -94,8 +95,8 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
   this->motor_pin_2 = motor_pin_2;
 
   // setup the pins on the microcontroller:
-  pinMode(this->motor_pin_1, OUTPUT);
-  pinMode(this->motor_pin_2, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_1, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_2, OUTPUT);
 
   // When there are only 2 pins, set the others to 0:
   this->motor_pin_3 = 0;
@@ -104,6 +105,8 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
 
   // pin_count is used by the stepMotor() method:
   this->pin_count = 2;
+
+  this->pcf8574->begin();
 }
 
 
@@ -111,9 +114,10 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
  *   constructor for four-pin version
  *   Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
+Stepper::Stepper(PCF8574 *pcf8574, int number_of_steps, int motor_pin_1, int motor_pin_2,
                                       int motor_pin_3, int motor_pin_4)
 {
+	this->pcf8574 = pcf8574;
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -126,26 +130,29 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
   this->motor_pin_4 = motor_pin_4;
 
   // setup the pins on the microcontroller:
-  pinMode(this->motor_pin_1, OUTPUT);
-  pinMode(this->motor_pin_2, OUTPUT);
-  pinMode(this->motor_pin_3, OUTPUT);
-  pinMode(this->motor_pin_4, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_1, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_2, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_3, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_4, OUTPUT);
 
   // When there are 4 pins, set the others to 0:
   this->motor_pin_5 = 0;
 
   // pin_count is used by the stepMotor() method:
   this->pin_count = 4;
+  this->pcf8574->begin();
+
 }
 
 /*
  *   constructor for five phase motor with five wires
  *   Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
+Stepper::Stepper(PCF8574 *pcf8574, int number_of_steps, int motor_pin_1, int motor_pin_2,
                                       int motor_pin_3, int motor_pin_4,
                                       int motor_pin_5)
 {
+	this->pcf8574 = pcf8574;
   this->step_number = 0;    // which step the motor is on
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
@@ -159,14 +166,17 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
   this->motor_pin_5 = motor_pin_5;
 
   // setup the pins on the microcontroller:
-  pinMode(this->motor_pin_1, OUTPUT);
-  pinMode(this->motor_pin_2, OUTPUT);
-  pinMode(this->motor_pin_3, OUTPUT);
-  pinMode(this->motor_pin_4, OUTPUT);
-  pinMode(this->motor_pin_5, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_1, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_2, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_3, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_4, OUTPUT);
+  this->pcf8574->pinMode(this->motor_pin_5, OUTPUT);
 
   // pin_count is used by the stepMotor() method:
   this->pin_count = 5;
+
+  this->pcf8574->begin();
+
 }
 
 /*
@@ -234,48 +244,48 @@ void Stepper::stepMotor(int thisStep)
   if (this->pin_count == 2) {
     switch (thisStep) {
       case 0:  // 01
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
+    	  this->pcf8574->digitalWrite(motor_pin_1, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_2, HIGH);
       break;
       case 1:  // 11
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, HIGH);
+    	  this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+    	  this->pcf8574->digitalWrite(motor_pin_2, HIGH);
       break;
       case 2:  // 10
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+    	  this->pcf8574->digitalWrite(motor_pin_2, LOW);
       break;
       case 3:  // 00
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_1, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_2, LOW);
       break;
     }
   }
   if (this->pin_count == 4) {
     switch (thisStep) {
       case 0:  // 1010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+    	  this->pcf8574->digitalWrite(motor_pin_2, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+    	  this->pcf8574->digitalWrite(motor_pin_4, LOW);
       break;
       case 1:  // 0110
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_1, LOW);
+    	  this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_4, LOW);
       break;
       case 2:  //0101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, LOW);
+        this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
       break;
       case 3:  //1001
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_2, LOW);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
       break;
     }
   }
@@ -283,74 +293,74 @@ void Stepper::stepMotor(int thisStep)
   if (this->pin_count == 5) {
     switch (thisStep) {
       case 0:  // 01101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, LOW);
+        this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_4, LOW);
+        this->pcf8574->digitalWrite(motor_pin_5, HIGH);
         break;
       case 1:  // 01001
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, LOW);
+        this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, LOW);
+        this->pcf8574->digitalWrite(motor_pin_5, HIGH);
         break;
       case 2:  // 01011
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, LOW);
+        this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_5, HIGH);
         break;
       case 3:  // 01010
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        this->pcf8574->digitalWrite(motor_pin_1, LOW);
+        this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_5, LOW);
         break;
       case 4:  // 11010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_2, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_5, LOW);
         break;
       case 5:  // 10010
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, LOW);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_2, LOW);
+        this->pcf8574->digitalWrite(motor_pin_3, LOW);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_5, LOW);
         break;
       case 6:  // 10110
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, HIGH);
-        digitalWrite(motor_pin_5, LOW);
+        this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_2, LOW);
+        this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_4, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_5, LOW);
         break;
       case 7:  // 10100
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, LOW);
+        this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_2, LOW);
+        this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_4, LOW);
+        this->pcf8574->digitalWrite(motor_pin_5, LOW);
         break;
       case 8:  // 10101
-        digitalWrite(motor_pin_1, HIGH);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_2, LOW);
+        this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_4, LOW);
+        this->pcf8574->digitalWrite(motor_pin_5, HIGH);
         break;
       case 9:  // 00101
-        digitalWrite(motor_pin_1, LOW);
-        digitalWrite(motor_pin_2, LOW);
-        digitalWrite(motor_pin_3, HIGH);
-        digitalWrite(motor_pin_4, LOW);
-        digitalWrite(motor_pin_5, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_1, LOW);
+        this->pcf8574->digitalWrite(motor_pin_2, LOW);
+        this->pcf8574->digitalWrite(motor_pin_3, HIGH);
+        this->pcf8574->digitalWrite(motor_pin_4, LOW);
+        this->pcf8574->digitalWrite(motor_pin_5, HIGH);
         break;
     }
   }
