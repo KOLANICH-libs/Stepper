@@ -79,27 +79,30 @@
 #ifndef Stepper_h
 #define Stepper_h
 
+
 // library interface description
 class Stepper {
-  public:
+public:
     // constructors:
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2);
+    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, bool (*pause_callback)(void));
     Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                                 int motor_pin_3, int motor_pin_4);
+            int motor_pin_3, int motor_pin_4, bool (*pause_callback)(void));
     Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                                 int motor_pin_3, int motor_pin_4,
-                                 int motor_pin_5);
+            int motor_pin_3, int motor_pin_4,
+            int motor_pin_5, bool (*pause_callback)(void));
 
     // speed setter method:
     void setSpeed(long whatSpeed);
 
     // mover method:
-    void step(int number_of_steps);
+    int step(int number_of_steps);
 
     int version(void);
 
-  private:
+private:
     void stepMotor(int this_step);
+
+    bool (*pause_callback)(void);
 
     int direction;            // Direction of rotation
     unsigned long step_delay; // delay between steps, in ms, based on speed
