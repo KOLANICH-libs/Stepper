@@ -27,10 +27,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 == Instalation ==
 Rename the existing stepper library 
+
 in MacOS:
-1. `mv /Applications/Arduino.app/Contents/Java/libraries/Stepper /Applications/Arduino.app/Contents/Java/libraries/Stepper_old`
-2. Download from this GitHub project "Stepper-master.zip"
+
+ - ```mv /Applications/Arduino.app/Contents/Java/libraries/Stepper /Applications/Arduino.app/Contents/Java/libraries/Stepper_old```
+ - Download from this GitHub project "Stepper-master.zip"
+
 In Arduino:
-3. Sketch > Include Library > Add .ZIP Library > select Stepper-master.zip
-4. `cp /Users/lachezargeorgiev/Documents/Arduino/libraries/Stepper-master /Applications/Arduino.app/Contents/Java/libraries/Stepper`
+
+ - Sketch > Include Library > Add .ZIP Library > select Stepper-master.zip
+ - ```cp /Users/lachezargeorgiev/Documents/Arduino/libraries/Stepper-master /Applications/Arduino.app/Contents/Java/libraries/Stepper```
+
 Enjoy ;)
