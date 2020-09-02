@@ -36,6 +36,6 @@ in MacOS:
 In Arduino:
 
  - Sketch > Include Library > Add .ZIP Library > select Stepper-master.zip
- - ```cp /Users/lachezargeorgiev/Documents/Arduino/libraries/Stepper-master /Applications/Arduino.app/Contents/Java/libraries/Stepper```
+ - ```cp ~/Documents/Arduino/libraries/Stepper-master /Applications/Arduino.app/Contents/Java/libraries/Stepper```
 
 Enjoy ;)
