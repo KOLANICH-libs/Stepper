@@ -82,7 +82,7 @@
  * two-wire constructor.
  * Sets which wires should control the motor.
  */
-Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, bool (*pause_callback)(void))
+Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, bool (*pause_callback)(int))
 {
     this->pause_callback = pause_callback;
     this->step_number = 0;    // which step the motor is on
@@ -113,7 +113,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, bool (*p
  *   Sets which wires should control the motor.
  */
 Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-                 int motor_pin_3, int motor_pin_4, bool (*pause_callback)(void))
+                 int motor_pin_3, int motor_pin_4, bool (*pause_callback)(int))
 {
     this->pause_callback = pause_callback;
     this->step_number = 0;    // which step the motor is on
@@ -146,7 +146,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
  */
 Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
                  int motor_pin_3, int motor_pin_4,
-                 int motor_pin_5, bool (*pause_callback)(void))
+                 int motor_pin_5, bool (*pause_callback)(int))
 {
     this->pause_callback = pause_callback;
     this->step_number = 0;    // which step the motor is on
@@ -226,7 +226,7 @@ int Stepper::step(int steps_to_move)
                 stepMotor(this->step_number % 10);
             else
                 stepMotor(this->step_number % 4);
-        } else if (this->pause_callback()) {
+        } else if (this->pause_callback(steps_left)) {
             return steps_left;
         }
     }

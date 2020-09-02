@@ -84,12 +84,12 @@
 class Stepper {
 public:
     // constructors:
-    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, bool (*pause_callback)(void));
+    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, bool (*pause_callback)(int));
     Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
-            int motor_pin_3, int motor_pin_4, bool (*pause_callback)(void));
+            int motor_pin_3, int motor_pin_4, bool (*pause_callback)(int));
     Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
             int motor_pin_3, int motor_pin_4,
-            int motor_pin_5, bool (*pause_callback)(void));
+            int motor_pin_5, bool (*pause_callback)(int));
 
     // speed setter method:
     void setSpeed(long whatSpeed);
@@ -102,7 +102,7 @@ public:
 private:
     void stepMotor(int this_step);
 
-    bool (*pause_callback)(void);
+    bool (*pause_callback)(int);
 
     int direction;            // Direction of rotation
     unsigned long step_delay; // delay between steps, in ms, based on speed
