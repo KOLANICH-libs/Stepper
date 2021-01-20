@@ -208,7 +208,7 @@ void Stepper::step(int steps_to_move)
 
 
   // decrement the number of steps, moving one step each time:
-  while (steps_left > 0  && noLimits())
+  while (steps_left > 0  & noLimits())
   {
     unsigned long now = micros();
     // move only if the appropriate delay has passed:
@@ -244,7 +244,7 @@ void Stepper::step(int steps_to_move)
 }
 
 /*
-*  Checks if limits are active before stepping.
+*  Checks if limits are not active.
 */
 bool Stepper::noLimits()
 {
@@ -252,10 +252,8 @@ bool Stepper::noLimits()
   int plus = digitalRead(this->plus_limit_pin);
   int neg = digitalRead(this->neg_limit_pin);
 
-  if ((this->direction ==1 && !plus)  ||
-      (this->direction ==0 && !neg))
-    rc = false; 
-  
+  rc = (!this->direction | !plus) &
+       (this->direction | !neg);
   return rc;
 }
 

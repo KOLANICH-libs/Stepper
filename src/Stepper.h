@@ -98,12 +98,14 @@ class Stepper {
 
     // mover method:
     void step(int number_of_steps);
-
+    // check limits:
+    bool noLimits();
+    
     int version(void);
 
   private:
     void stepMotor(int this_step);
-    bool noLimits();
+    
 
     int direction;            // Direction of rotation
     unsigned long step_delay; // delay between steps, in ms, based on speed
