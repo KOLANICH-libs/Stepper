@@ -245,6 +245,7 @@ void Stepper::step(int steps_to_move)
 
 /*
 *  Checks if limits are not active.
+*  This function uses the direction flag
 */
 bool Stepper::noLimits()
 {
@@ -252,8 +253,8 @@ bool Stepper::noLimits()
   int plus = digitalRead(this->plus_limit_pin);
   int neg = digitalRead(this->neg_limit_pin);
 
-  rc = (!this->direction | !plus) &
-       (this->direction | !neg);
+  rc = ((!this->direction | !plus) &
+       (this->direction | !neg)) | !this->limits;
   return rc;
 }
 
