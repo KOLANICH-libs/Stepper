@@ -90,6 +90,9 @@ class Stepper {
                                  int motor_pin_3, int motor_pin_4,
                                  int motor_pin_5);
 
+    // limit switches:
+    void setLimits(int plus_limit_pin, int neg_limit_pin);
+    
     // speed setter method:
     void setSpeed(long whatSpeed);
 
@@ -100,12 +103,14 @@ class Stepper {
 
   private:
     void stepMotor(int this_step);
+    bool noLimits();
 
     int direction;            // Direction of rotation
     unsigned long step_delay; // delay between steps, in ms, based on speed
     int number_of_steps;      // total number of steps this motor can take
     int pin_count;            // how many pins are in use.
     int step_number;          // which step the motor is on
+    bool limits;              // Does the stepper have limits
 
     // motor pin numbers:
     int motor_pin_1;
@@ -113,6 +118,10 @@ class Stepper {
     int motor_pin_3;
     int motor_pin_4;
     int motor_pin_5;          // Only 5 phase motor
+
+    // limit pins:
+    int plus_limit_pin;
+    int neg_limit_pin;
 
     unsigned long last_step_time; // time stamp in us of when the last step was taken
 };

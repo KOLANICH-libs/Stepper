@@ -8,6 +8,7 @@
  * High-speed stepping mod         by Eugene Kozlenko
  * Timer rollover fix              by Eugene Kozlenko
  * Five phase five wire    (1.1.0) by Ryan Orendorff
+ * limit switches 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -88,6 +89,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2)
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
   this->number_of_steps = number_of_steps; // total number of steps for this motor
+  this->limits = false;     // set limits disabled
 
   // Arduino pins for the motor control connection:
   this->motor_pin_1 = motor_pin_1;
@@ -118,6 +120,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
   this->number_of_steps = number_of_steps; // total number of steps for this motor
+  this->limits = false;     // set limits disabled
 
   // Arduino pins for the motor control connection:
   this->motor_pin_1 = motor_pin_1;
@@ -150,6 +153,7 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
   this->direction = 0;      // motor direction
   this->last_step_time = 0; // time stamp in us of the last step taken
   this->number_of_steps = number_of_steps; // total number of steps for this motor
+  this->limits = false;     // set limits disabled
 
   // Arduino pins for the motor control connection:
   this->motor_pin_1 = motor_pin_1;
@@ -168,7 +172,20 @@ Stepper::Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2,
   // pin_count is used by the stepMotor() method:
   this->pin_count = 5;
 }
+/*
+*  Sets limit switches
+*  
+*/
+void Stepper::setLimits(int plus_limit_pin, int neg_limit_pin)
+{
+  this->limits = true;
+  this->plus_limit_pin = plus_limit_pin;
+  this->neg_limit_pin = neg_limit_pin;
 
+  pinMode(this->plus_limit_pin, INPUT_PULLUP);
+  pinMode(this->neg_limit_pin, INPUT_PULLUP);
+
+}
 /*
  * Sets the speed in revs per minute
  */
@@ -191,7 +208,7 @@ void Stepper::step(int steps_to_move)
 
 
   // decrement the number of steps, moving one step each time:
-  while (steps_left > 0)
+  while (steps_left > 0  && noLimits())
   {
     unsigned long now = micros();
     // move only if the appropriate delay has passed:
@@ -224,6 +241,22 @@ void Stepper::step(int steps_to_move)
         stepMotor(this->step_number % 4);
     }
   }
+}
+
+/*
+*  Checks if limits are active before stepping.
+*/
+bool Stepper::noLimits()
+{
+  bool rc = true;
+  int plus = digitalRead(this->plus_limit_pin);
+  int neg = digitalRead(this->neg_limit_pin);
+
+  if ((this->direction ==1 && !plus)  ||
+      (this->direction ==0 && !neg))
+    rc = false; 
+  
+  return rc;
 }
 
 /*
