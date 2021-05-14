@@ -8,7 +8,7 @@
  * High-speed stepping mod         by Eugene Kozlenko
  * Timer rollover fix              by Eugene Kozlenko
  * Five phase five wire    (1.1.0) by Ryan Orendorff
- * Microstepping on bipolar(1.2.0) by Attila Kovács
+ * Microstepping on bipolar(1.2.0) by Attila KovÃ¡cs
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -294,7 +294,7 @@ void Stepper::setSpeed(long whatSpeed)
   if (this->micro_stepping) {
 	  this->micro_step_delay = step_delay / number_of_micro_steps;
 	  // the PWM signal frqequency is proprtinal to the RPM
-	  analogWriteFreq(whatSpeed * 100);
+	  // analogWriteFreq(whatSpeed * 100);
   }
   else
     this->micro_step_delay = 0;
@@ -411,8 +411,7 @@ void Stepper::microStepMotor(int this_step, int this_micro_step)
 {
 	//yield() might be needed at slow RPM and/or many steps on an ESP8266
 	//yield(); 
-	int coil1value;
-	int coil2value;
+	int coil1value, coil2value, PWMRANGE;
 	
 	switch (this->number_of_micro_steps) {
 	case 2:
