@@ -9,16 +9,16 @@ The motor swings the same number of steps clockwise and back.
 
 
 Created 17 Mar. 2017
-by Attila Kov·cs
+by Attila Kov√°cs
 
 */
 
-#include "Stepper.h"
+#include <Stepper.h>
 
-#define DIR_MOTOR_A D3
-#define DIR_MOTOR_B D4
-#define PWM_MOTOR_A D1
-#define PWM_MOTOR_B D2
+#define DIR_MOTOR_A 3
+#define DIR_MOTOR_B 4
+#define PWM_MOTOR_A 1
+#define PWM_MOTOR_B 2
 
 const int stepsPerRevolution = 48;  // change this to fit the number of steps per revolution
 const int microSteps = 8;			// valid values are 2, 4, 8
