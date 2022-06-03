@@ -90,6 +90,10 @@ class Stepper {
                                  int motor_pin_3, int motor_pin_4,
                                  int motor_pin_5);
 
+    //for when using two wires without a bridge
+    Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int reverse_pin_1, 
+            int reverse_pin_2, bool internal_inverter=true)
+
     // speed setter method:
     void setSpeed(long whatSpeed);
 
@@ -113,6 +117,11 @@ class Stepper {
     int motor_pin_3;
     int motor_pin_4;
     int motor_pin_5;          // Only 5 phase motor
+
+    //for when using two wires
+    int reverse_pin_1;
+    int reverse_pin_2;
+    bool internal_inverter;
 
     unsigned long last_step_time; // timestamp in us of when the last step was taken
 };
