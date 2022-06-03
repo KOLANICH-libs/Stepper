@@ -298,6 +298,8 @@ void Stepper::step(int steps_to_move)
       steps_left--;
       // step the motor to step number 0, 1, ..., {3 or 10}
       stepMotor(this->step_number % this->beats_per_pattern);
+    } else {
+      yield();
     }
   }
 }
