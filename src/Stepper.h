@@ -53,13 +53,26 @@
  *    9  1  0  1  0  1
  *   10  0  0  1  0  1
  *
- * The sequence of control signals for 4 control wires is as follows:
+ * There are two possible sequences for 4 control wires.
+ * Stepper pattern with four beats (the default) is as follows:
  *
  * Step C0 C1 C2 C3
  *    1  1  0  1  0
  *    2  0  1  1  0
  *    3  0  1  0  1
  *    4  1  0  0  1
+ *
+ * Stepper pattern with eight half steps is as follows:
+ *
+ * Step C0 C1 C2 C3
+ *    1  1  0  0  0
+ *    2  1  1  0  0
+ *    3  0  1  0  0
+ *    4  0  1  1  0
+ *    5  0  0  1  0
+ *    6  0  0  1  1
+ *    7  0  0  0  1
+ *    8  1  0  0  1
  *
  * The sequence of control signals for 2 control wires is as follows
  * (columns C1 and C2 from above):
@@ -90,6 +103,9 @@ class Stepper {
                                  int motor_pin_3, int motor_pin_4,
                                  int motor_pin_5);
 
+    // four-wire motors can have either four or eight beats
+    void setBeatsPerPattern( int beats );
+
     //for when using two wires without a bridge
     Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int reverse_pin_1, 
             int reverse_pin_2, bool internal_inverter=true)
@@ -110,6 +126,7 @@ class Stepper {
     int number_of_steps;      // total number of steps this motor can take
     int pin_count;            // how many pins are in use.
     int step_number;          // which step the motor is on
+    int beats_per_pattern;    // number of beats in the motor pattern
 
     // motor pin numbers:
     int motor_pin_1;
@@ -127,4 +144,3 @@ class Stepper {
 };
 
 #endif
-
