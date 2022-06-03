@@ -323,26 +323,26 @@ void Stepper::stepMotor(int thisStep)
       case 0:  // 01
         digitalWrite(motor_pin_1, LOW);
         digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(reverse_pin_1, HIGH)
-        digitalWrite(reverse_pin_2, LOW)
+        digitalWrite(reverse_pin_1, HIGH);
+        digitalWrite(reverse_pin_2, LOW);
       break;
       case 1:  // 11
         digitalWrite(motor_pin_1, HIGH);
         digitalWrite(motor_pin_2, HIGH);
-        digitalWrite(reverse_pin_1, LOW)
-        digitalWrite(reverse_pin_2, LOW)
+        digitalWrite(reverse_pin_1, LOW);
+        digitalWrite(reverse_pin_2, LOW);
       break;
       case 2:  // 10
         digitalWrite(motor_pin_1, HIGH);
         digitalWrite(motor_pin_2, LOW);
-        digitalWrite(reverse_pin_1, LOW)
-        digitalWrite(reverse_pin_2, HIGH)
+        digitalWrite(reverse_pin_1, LOW);
+        digitalWrite(reverse_pin_2, HIGH);
       break;
       case 3:  // 00
         digitalWrite(motor_pin_1, LOW);
         digitalWrite(motor_pin_2, LOW);
-        digitalWrite(reverse_pin_1, HIGH)
-        digitalWrite(reverse_pin_2, HIGH)
+        digitalWrite(reverse_pin_1, HIGH);
+        digitalWrite(reverse_pin_2, HIGH);
       break;
     }
   }

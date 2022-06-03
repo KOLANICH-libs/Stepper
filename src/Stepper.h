@@ -108,7 +108,7 @@ class Stepper {
 
     //for when using two wires without a bridge
     Stepper(int number_of_steps, int motor_pin_1, int motor_pin_2, int reverse_pin_1, 
-            int reverse_pin_2, bool internal_inverter=true)
+            int reverse_pin_2, bool internal_inverter=true);
 
     // speed setter method:
     void setSpeed(long whatSpeed);
